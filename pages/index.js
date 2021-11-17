@@ -23,25 +23,36 @@ export default function Home() {
   const [list, updateList] = React.useState([]);
   const [loopCount, setLoopCount] = React.useState(0);
   const [wordCount, setWordCount] = React.useState(2);
+  const [elapsedMS, setElapsedMS] = React.useState(0);
 
   React.useEffect(() => {
+    let start = Date.now();
+
     const interval = setInterval(() => {
-      const newPhrase = buildRandomPhrase(wordCount);
+      const delta = Date.now() - start;
 
-      console.log(`Appending "${newPhrase}" to the list.`);
+      setElapsedMS(delta);
 
-      list.push(newPhrase);
+      if (delta > 1500) {
+        const newPhrase = buildRandomPhrase(wordCount);
 
-      if (list.length > 6) {
-        list.shift();
+        console.log(`Appending "${newPhrase}" to the list.`);
+
+        list.push(newPhrase);
+
+        if (list.length > 6) {
+          list.shift();
+        }
+
+        setLoopCount(loopCount++);
+
+        updateList(list);
+
+        setLoopCount(loopCount++);
+
+        start = Date.now();
       }
-
-      setLoopCount(loopCount++);
-
-      updateList(list);
-
-      setLoopCount(loopCount++);
-    }, 1500);
+    }, 50);
 
     return () => clearInterval(interval);
   }, [wordCount]);
@@ -54,7 +65,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <WordCount wordCount={wordCount} setWordCount={setWordCount} />
+      <WordCount wordCount={wordCount} setWordCount={setWordCount} elapsedMS={elapsedMS} />
 
       <main className={styles.main}>
         {list.map((phrase, index) => {

@@ -4,11 +4,14 @@ import UpArrow from '../assets/arrow_drop_up_black_48dp.svg';
 import DownArrow from '../assets/arrow_drop_down_black_48dp.svg';
 import styles from '../styles/Home.module.css'
 
-function VisualTimer({ ms }) {
+function VisualTimer({ elapsedMS }) {
+  const calc = (100 * elapsedMS) / 1500;
+  const progress = calc > 100 ? 100 : calc;
+
   const style = {
     '--offset': 0,
-    '--value': 100,
-    '--over50': 1,
+    '--value': progress,
+    '--over50': progress > 50 ? 1 : 0,
     '--bg': '#333',
   };
 
@@ -19,7 +22,7 @@ function VisualTimer({ ms }) {
   );
 }
 
-export default function WordCount({ wordCount, setWordCount }) {
+export default function WordCount({ wordCount, setWordCount, elapsedMS }) {
   const handleIncrease = () => {
     setWordCount(wordCount + 1);
   }
@@ -40,6 +43,9 @@ export default function WordCount({ wordCount, setWordCount }) {
       </div>
       <div className={styles.wordCountChange} onClick={handleDecrease}>
         <Image src={DownArrow} alt="Decrease word count" />
+      </div>
+      <div className={styles.pieChartContainer}>
+        <VisualTimer elapsedMS={elapsedMS} />
       </div>
     </div>
   );
